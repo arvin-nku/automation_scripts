@@ -30,3 +30,5 @@ else
 		echo "GITHUB_DIR is already set in ~/.bashrc"
 	fi
 fi
+
+source ~/.bashrc

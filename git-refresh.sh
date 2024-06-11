@@ -92,3 +92,4 @@ if ! grep -q -v "up-to-date" repo_status.log; then
 fi
 
 echo "All repositories have been processed."
+source ~/.bashrc
