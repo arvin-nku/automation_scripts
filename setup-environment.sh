@@ -38,7 +38,7 @@ if [ ! -d "$SCRIPTS_DIR" ]; then
 fi
 
 # Add the automation_scripts directory to PATH and make scripts executable
-export PATH="$SCRIPTS_DIR:$PATH"
+echo "export PATH='$SCRIPTS_DIR:$PATH'" >>~/.bashrc
 
 for script in "$SCRIPTS_DIR"/*.sh; do
 	[ -f "$script" ] && chmod +x "$script"

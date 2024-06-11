@@ -47,11 +47,11 @@ clone_or_update_repo() {
 		cd - >/dev/null || exit
 	else
 		status="not-cloned"
+		echo "$repo_name: $status"
 		echo "Cloning $repo_name..."
 		git clone "$repo_url" "$repo_dir"
 	fi
 
-	echo "$repo_name: $status"
 	echo "$repo_name: $status" >>repo_status.log
 
 }
