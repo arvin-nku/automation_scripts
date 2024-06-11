@@ -1,47 +1,41 @@
 #!/bin/bash
 
-########## adding automation_scripts to path for the scripts to be executable
-# Function to search for the GITHUB directory
-find_github_directory() {
-	find ~ /mnt/c/Users -type d -name "GITHUB" -exec sh -c '
-        for dir; do
-            if [ -f "$dir/git" ]; then
-                echo "$dir"
-                exit 0
-            fi
-        done
-        exit 1
-    ' sh {} +
-}
-
-# Find the GITHUB directory
-GITHUB_DIR=$(find_github_directory)
-
-if [ -z "$GITHUB_DIR" ]; then
-	echo "GITHUB directory with git not found. Exiting."
-	exit 1
+# Load the GITHUB_DIR from the environment file
+if [ -f github_dir.env ]; then
+    source github_dir.env
 else
-	echo "GITHUB directory found at $GITHUB_DIR"
+    echo "Environment file github_dir.env not found. Please run find-github-dir.sh first."
+    exit 1
 fi
 
 # Ensure the automation_scripts directory exists
 SCRIPTS_DIR="$GITHUB_DIR/automation_scripts"
 
 if [ ! -d "$SCRIPTS_DIR" ]; then
-	echo "automation_scripts directory does not exist. Running git-refresh.sh to create it..."
-	./git-refresh.sh
+    echo "automation_scripts directory does not exist. Running git-refresh.sh to create it..."
+    ./git-refresh.sh
 fi
 
 if [ ! -d "$SCRIPTS_DIR" ]; then
-	echo "Failed to create automation_scripts directory. Exiting."
-	exit 1
+    echo "Failed to create automation_scripts directory. Exiting."
+    exit 1
 fi
 
-# Add the automation_scripts directory to PATH and make scripts executable
-echo "export PATH='$SCRIPTS_DIR:$PATH'" >>~/.bashrc
+# Add the automation_scripts directory to PATH and make .sh scripts executable
+if ! grep -q "export PATH=\"$SCRIPTS_DIR:\$PATH\"" ~/.bashrc; then
+    echo "export PATH=\"$SCRIPTS_DIR:\$PATH\"" >> ~/.bashrc
+    echo "SCRIPTS_DIR has been added to PATH in ~/.bashrc"
+else
+    echo "SCRIPTS_DIR is already in PATH in ~/.bashrc"
+fi
 
+# Make only .sh scripts in the directory executable
 for script in "$SCRIPTS_DIR"/*.sh; do
-	[ -f "$script" ] && chmod +x "$script"
+    if [ -f "$script" ]; then
+        chmod +x "$script"
+        echo "Made $script executable."
+    fi
 done
 
-echo "automation_scripts directory has been added to PATH and scripts made executable."
+echo "All .sh scripts in $SCRIPTS_DIR have been made executable."
+

@@ -1,9 +1,14 @@
 #!/bin/bash
 
+# Ensure GITHUB_DIR is set
+if [ -z "$GITHUB_DIR" ]; then
+	echo "GITHUB_DIR is not set. Please run find-github-dir.sh first and source ~/.bashrc."
+	exit 1
+fi
+
 #Configuration
 GITHUB_USERNAME="arvin-nku"
 GITHUB_TOKEN="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" # Use a Github token if your repos are private
-GITHUB_DIR="$HOME/GITHUB"
 
 # Debugging: Check if the variables are set correctly
 echo "GITHUB_USERNAME: $GITHUB_USERNAME"
@@ -22,6 +27,7 @@ mkdir -p "$GITHUB_DIR"
 clone_or_update_repo() {
 	local repo_name="$1"
 	local repo_url="https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com/$GITHUB_USERNAME/$repo_name.git"
+	echo "$repo_url"
 	local repo_dir="$GITHUB_DIR/$repo_name"
 	local status=""
 
@@ -49,7 +55,8 @@ clone_or_update_repo() {
 		status="not-cloned"
 		echo "$repo_name: $status"
 		echo "Cloning $repo_name..."
-		git clone "$repo_url" "$repo_dir"
+		cd "$GITHUB_DIR" || exit # Ensure we are in the GITHUB_DIR before cloning
+		git clone "$repo_url" "$repo_name"
 	fi
 
 	echo "$repo_name: $status" >>repo_status.log
@@ -69,7 +76,7 @@ else
 fi
 
 # Clear the log file
->repo_status.log
+: >repo_status.log
 
 # Iterate over each repository and clone or update it
 for repo in $repos; do
