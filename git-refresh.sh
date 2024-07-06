@@ -7,8 +7,8 @@ if [ -z "$GITHUB_DIR" ]; then
 fi
 
 #Configuration
-GITHUB_USERNAME="arvin-nku"
-GITHUB_TOKEN="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" # Use a Github token if your repos are private
+GITHUB_USERNAME="$GITHUB_USERNAME"
+GITHUB_TOKEN="$GITHUB_TOKEN" # Use a Github token if your repos are private
 
 # Debugging: Check if the variables are set correctly
 echo "GITHUB_USERNAME: $GITHUB_USERNAME"
